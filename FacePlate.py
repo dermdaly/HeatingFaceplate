@@ -26,7 +26,7 @@ import math
 # UK 2-gang faceplate dimensions (mm)
 FACEPLATE_WIDTH = 146.0
 FACEPLATE_HEIGHT = 86.0
-FACEPLATE_THICKNESS = 4.0  # Total thickness of faceplate
+FACEPLATE_THICKNESS = 6.0  # Total thickness of faceplate
 
 # Screw holes
 SCREW_SPACING = 120.0  # Centre to centre (UK 2-gang standard)
@@ -185,7 +185,7 @@ def create_faceplate():
     # ------------------------------------------------------------
     # LED holes (fixed Y position, not relative to BILRESA)
     # ------------------------------------------------------------
-    led_y_pos = 30.0  # Absolute Y position for LEDs
+    led_y_pos = 31.0  # Absolute Y position for LEDs
     
     for i, pos in enumerate(bilresa_positions):
         led_pos = Vector(pos.x, led_y_pos, 0)  # Same X as BILRESA, fixed Y
@@ -228,7 +228,7 @@ def create_faceplate():
     # Y position - towards bottom of faceplate but within inner box dimensions
     # Faceplate Y range: -43 to +43 (half of 86mm)
     # Inner box height: 69.5mm, so inner Y range: -34.75 to +34.75
-    shelly_y_pos = -FACEPLATE_HEIGHT/2 + cradle_external_height/2 + 6.0  # Raised 4mm total (was 2mm from bottom)
+    shelly_y_pos = -FACEPLATE_HEIGHT/2 + cradle_external_height/2 + 8.0  # Raised 4mm total (was 2mm from bottom)
     
     shelly_housings = Part.Shape()  # Empty shape to collect all housing parts
     
