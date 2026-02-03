@@ -28,6 +28,14 @@ FACEPLATE_WIDTH = 146.0
 FACEPLATE_HEIGHT = 86.0
 FACEPLATE_THICKNESS = 6.0  # Total thickness of faceplate
 
+# Edge treatment (front = printed face-down on the bed)
+# Set either/both to False to disable quickly
+ENABLE_FRONT_CHAMFER = True
+FRONT_CHAMFER_SIZE = 0.6  # Small chamfer prints cleaner on the bed
+
+ENABLE_BACK_FILLET = True
+BACK_FILLET_RADIUS = 1.0  # Rounded edge for a manufactured feel
+
 # Screw holes
 SCREW_SPACING = 120.0  # Centre to centre (UK 2-gang standard)
 SCREW_DIAMETER = 4.0   # M3.5/M4 screws typical
@@ -95,6 +103,36 @@ def create_faceplate():
     )
     
     faceplate = base_box
+
+    # ------------------------------------------------------------
+    # Edge treatment (make it easy to toggle)
+    # ------------------------------------------------------------
+    def _edges_at_z(shape, z_value, tol=1e-6):
+        edges = []
+        for edge in shape.Edges:
+            v0 = edge.Vertexes[0]
+            v1 = edge.Vertexes[1]
+            if abs(v0.Z - z_value) < tol and abs(v1.Z - z_value) < tol:
+                edges.append(edge)
+        return edges
+
+    # Front (bed) edge: chamfer on Z = FACEPLATE_THICKNESS
+    if ENABLE_FRONT_CHAMFER and FRONT_CHAMFER_SIZE > 0:
+        front_edges = _edges_at_z(faceplate, FACEPLATE_THICKNESS)
+        if front_edges:
+            try:
+                faceplate = faceplate.makeChamfer(FRONT_CHAMFER_SIZE, front_edges)
+            except:
+                print("Warning: front chamfer failed; leaving front edge sharp.")
+
+    # Back edge: fillet on Z = 0
+    if ENABLE_BACK_FILLET and BACK_FILLET_RADIUS > 0:
+        back_edges = _edges_at_z(faceplate, 0)
+        if back_edges:
+            try:
+                faceplate = faceplate.makeFillet(BACK_FILLET_RADIUS, back_edges)
+            except:
+                print("Warning: back fillet failed; leaving back edge sharp.")
     
     # ------------------------------------------------------------
     # Screw holes (120mm apart, centred vertically)
